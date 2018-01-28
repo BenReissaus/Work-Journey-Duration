@@ -38,3 +38,8 @@ class QueryResult(db.Model):
         return format_string.format(self.origin.alias, self.destination.alias,
                                     self.departure_time, travel_duration_min, travel_duration_sec)
 
+    @staticmethod
+    def averages(destination):
+
+        averages = [12, 19, 3, 5, 2, 8, 2, 7, 10, 4, 12, 4]
+        return averages
