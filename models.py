@@ -49,7 +49,7 @@ class Journey(db.Model):
         destination_id = Location.query.filter_by(alias=destination_alias).first().id
 
         calculated_averages = db.session \
-            .query(func.avg(Journey.travel_duration)) \
+            .query(func.avg(Journey.travel_duration) / 60) \
             .filter(Journey.destination_id == destination_id) \
             .group_by(Journey.departure_hour, Journey.departure_quarter) \
             .order_by(Journey.departure_hour, Journey.departure_quarter) \
