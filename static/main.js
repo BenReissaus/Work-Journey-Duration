@@ -36,7 +36,7 @@ $.ajax({
     type: 'get',
     dataType: 'json',
     data: {
-        "direction": "pete"
+        "destination": "work"
     },
     success: function(data) {
         console.log(typeof(data))

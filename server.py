@@ -1,7 +1,10 @@
 from flask import Flask
 from flask import render_template
 from flask import jsonify
-from models import QueryResult
+from flask import request
+from models import Journey, Location
+from sqlalchemy import func
+
 app = Flask(__name__)
 
 @app.route('/work-journey-time')
@@ -10,9 +13,10 @@ def work_journey_time():
 
 
 @app.route('/calculate-averages')
-def calculate_averages(destination="home"):
+def calculate_averages():
 
+    destination = request.args.get("destination", default="home")
     if destination != "home" and destination != "work":
         destination = "home"
 
-    return jsonify(QueryResult.averages(destination))
+    return jsonify(Journey.averages(destination))
