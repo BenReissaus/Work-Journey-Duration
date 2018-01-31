@@ -1,11 +1,9 @@
-function drawChart(title, elementId, data) {
+function drawChart(title, elementId, labels, data) {
     var ctx = document.getElementById(elementId).getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ["7:00", "7:15", "7:45", "8:00",
-                "8:15", "8:30", "8:45", "9:00",
-                "9:15", "9:30", "9:45", "10:00"],
+            labels: labels,
             datasets: [{
                 label: 'Average Journey Time in Minutes Per Day',
                 data: data,
@@ -30,7 +28,7 @@ function drawChart(title, elementId, data) {
     });
 }
 
-function getDataAndDrawChart(destination, title, elementId) {
+function getDataAndDrawChart(destination, title, elementId, labels) {
     $.ajax({
         url: '/calculate-averages',
         type: 'get',
@@ -40,7 +38,7 @@ function getDataAndDrawChart(destination, title, elementId) {
         },
         success: function(data) {
             console.log(data)
-            drawChart(title, elementId, data)
+            drawChart(title, elementId, labels, data)
         },
         error: function(jqxhr, textStatus, errorThrown) {
             console.log("Couldn't retrieve duration averages")
@@ -50,6 +48,8 @@ function getDataAndDrawChart(destination, title, elementId) {
         }
     })
 }
-
-getDataAndDrawChart("work", "Work Journey Duration", "work-chart")
-getDataAndDrawChart("home", "Home Journey Duration", "home-chart")
+morning_times = ["7:00", "7:15", "7:45", "8:00", "8:15", "8:30", "8:45", "9:00", "9:15", "9:30", "9:45", "10:00"]
+evening_times = ["17:00", "17:15", "17:45", "18:00", "18:15", "18:30", "18:45", "19:00", "19:15", "19:30", "19:45",
+    "20:00"]
+getDataAndDrawChart("work", "Work Journey Duration", "work-chart", morning_times)
+getDataAndDrawChart("home", "Home Journey Duration", "home-chart", evening_times)
