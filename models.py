@@ -4,6 +4,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy import func
 
@@ -28,8 +29,6 @@ class Journey(db.Model):
     origin_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
     destination_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
     departure_time = db.Column(db.DateTime, nullable=False)
-    departure_quarter = db.Column(db.Integer, nullable=False)
-    departure_hour = db.Column(db.Integer, nullable=False)
     travel_duration = db.Column(db.Integer, nullable=False)
 
     origin = relationship("Location", foreign_keys=[origin_id])
@@ -43,6 +42,26 @@ class Journey(db.Model):
         return format_string.format(self.origin.alias, self.destination.alias,
                                     self.departure_time, travel_duration_min, travel_duration_sec)
 
+    @hybrid_property
+    def departure_hour(self):
+        return self.departure_time.hour
+
+    @departure_hour.expression
+    def departure_hour(cls):
+        return db.func.extract('hour', cls.departure_time).cast(db.Integer)
+
+    @staticmethod
+    def _extract_quarter_hour(minute):
+        return minute / 15
+
+    @hybrid_property
+    def departure_quarter(self):
+        return self._extract_quarter_hour(self.departure_time.minute)
+
+    @departure_quarter.expression
+    def departure_quarter(cls):
+        minute = db.func.extract('minute', cls.departure_time).cast(db.Integer)
+        return cls._extract_quarter_hour(minute)
 
     @staticmethod
     def averages(destination_alias):

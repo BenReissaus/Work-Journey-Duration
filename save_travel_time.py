@@ -32,11 +32,7 @@ def save_travel_time(origin, destination, departure_time):
     travel_duration = get_travel_duration(direction_results)
 
     qr = Journey(origin=origin, destination=destination,
-                 departure_time=current_time,
-                 departure_hour=current_time.hour,
-                 departure_quarter=current_time.minute / 15,
-                 travel_duration=travel_duration,
-                 )
+                 departure_time=current_time, travel_duration=travel_duration)
 
     db.session.add(qr)
     db.session.commit()
