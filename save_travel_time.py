@@ -4,15 +4,16 @@
 import googlemaps
 import sys
 from settings import APIKEY
-from datetime import datetime
 from models import *
+import datetime
 
 gmaps = googlemaps.Client(key=APIKEY)
+
 
 work = Location.query.filter_by(alias="work").first()
 home = Location.query.filter_by(alias="home").first()
 
-current_time = datetime.now()
+current_time = datetime.datetime.now()
 
 
 def save_go_home_time():
@@ -24,9 +25,11 @@ def save_go_to_work_time():
 
 
 def save_travel_time(origin, destination, departure_time):
-    direction_results = gmaps.directions(origin=work.address,
-                                         destination=home.address,
+    direction_results = gmaps.directions(origin=origin.address,
+                                         destination=destination.address,
                                          departure_time=departure_time,
+                                         mode='driving',
+                                         traffic_model='best_guess',
                                          alternatives=False)
 
     travel_duration = get_travel_duration(direction_results)
@@ -46,6 +49,7 @@ if __name__ == "__main__":
     error_message = "Usage: python save_travel_time.py [work | home]"
     if len(sys.argv) != 2:
         print error_message
+        sys.exit(1)
 
     direction = sys.argv[1]
 
@@ -55,3 +59,4 @@ if __name__ == "__main__":
         save_go_to_work_time()
     else:
         print error_message
+        sys.exit(1)
